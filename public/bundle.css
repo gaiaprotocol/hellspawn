@@ -121,6 +121,7 @@ meter {
 :root {
   --wrapper-bg-color: #121212;
   --content-bg-color: #141414;
+  --panel-bg-color: #1E1E1E;
   --text-color: #fff;
   --line-color: #252527;
   --primary-color: #C1A87D;
@@ -130,8 +131,10 @@ meter {
   --success-color: #00FF00;
   --popup-bg-color: rgba(0, 0, 0, 0.5);
   --button-bg-color: rgba(193, 168, 125, 0.12);
-  --hover-color: rgba(193, 168, 125, 0.12);
+  --hover-color: rgba(193, 168, 125, 0.2);
   --disable-color: rgba(255, 255, 255, 0.5);
+  --loading-bar-bg-color: rgba(193, 168, 125, 0.1);
+  --loading-bar-color: rgba(193, 168, 125, 0.5);
   width: 100%;
   height: 100%;
   background-color: var(--wrapper-bg-color);
@@ -165,14 +168,6 @@ button {
   display: table;
   clear: both;
 }
-.avatar {
-  flex-shrink: 0;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: #252527;
-  background-size: cover;
-}
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 100, 'GRAD' 0, 'opsz' 24;
 }
@@ -183,6 +178,7 @@ button.component {
   justify-content: center;
   padding: 8px 16px;
   color: var(--primary-color);
+  border-radius: 6px;
   line-height: 1em;
   gap: 8px;
 }
@@ -192,11 +188,13 @@ button.component.disabled {
 }
 button.component.contained {
   border: 1px solid var(--primary-color);
-  border-radius: 6px;
   background-color: var(--button-bg-color);
 }
 button.component > .title {
   text-transform: capitalize;
+}
+button.component:hover {
+  background-color: var(--hover-color);
 }
 .nav-bar.component {
   position: fixed;
@@ -304,6 +302,9 @@ button.component > .title {
 }
 .popup.component > header > h1 {
   flex-grow: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 18px;
   font-weight: bold;
   text-transform: capitalize;
@@ -315,6 +316,7 @@ button.component > .title {
   padding: 24px;
   display: flex;
   justify-content: flex-end;
+  gap: 8px;
 }
 @keyframes loading-spinner-animation {
   0% {
@@ -333,6 +335,33 @@ button.component > .title {
   border: 2px solid var(--text-color);
   border-color: var(--text-color) transparent var(--text-color) transparent;
   animation: loading-spinner-animation 1.2s linear infinite;
+}
+@keyframes list-loading-bar-loading {
+  0% {
+    left: -50%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+.list-loading-bar.component {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--loading-bar-bg-color);
+  z-index: 999997;
+  overflow: hidden;
+}
+.list-loading-bar.component::before {
+  content: '';
+  position: absolute;
+  left: -50%;
+  width: 50%;
+  height: 100%;
+  background-color: var(--loading-bar-color);
+  animation: list-loading-bar-loading 2s linear infinite;
 }
 .dropdown-menu.component {
   position: fixed;
@@ -387,6 +416,34 @@ button.component > .title {
 .snackbar.component > main > p {
   flex-grow: 1;
 }
+.tabs.component {
+  border-bottom: 1px solid var(--line-color);
+  display: flex;
+  gap: 40px;
+  padding: 10px 20px 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.tabs.component > .tab {
+  cursor: pointer;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  border-bottom: 3px solid transparent;
+  padding: 0 10px;
+}
+.tabs.component > .tab:hover {
+  color: var(--primary-color);
+}
+.tabs.component > .tab.active {
+  color: var(--primary-color);
+  border-bottom: 3px solid var(--primary-color);
+}
+.input.component {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 .input.component > textarea,
 .input.component > input {
   width: 100%;
@@ -401,12 +458,15 @@ button.component > .title {
 }
 .select.component {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.select.component > .value {
   border: 1px solid var(--line-color);
   border-radius: 6px;
   background-color: var(--content-bg-color);
   cursor: pointer;
-}
-.select.component > .value {
   display: flex;
   align-items: center;
   padding: 8px 12px;
@@ -415,6 +475,7 @@ button.component > .title {
 }
 .select.component > .value:empty::before {
   content: attr(data-empty-message);
+  color: var(--disable-color);
 }
 .select.component > .option-container {
   display: none;
@@ -430,11 +491,12 @@ button.component > .title {
 .select.component > .option-container > .option {
   padding: 8px 12px;
   text-transform: capitalize;
+  cursor: pointer;
 }
 .select.component > .option-container > .option:hover {
   background-color: var(--primary-color);
 }
-.select.component.open {
+.select.component.open > .value {
   border: 1px solid var(--primary-color);
 }
 .select.component.open > .option-container {
@@ -488,10 +550,13 @@ button.component > .title {
   max-height: 320px;
   object-fit: cover;
 }
-.error-alert.component > header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.rich-display.component > .image-container > a > img.hidden {
+  display: none;
+}
+.rich-display.component > .image-container > a > .image-loading-animation {
+  border-radius: 12px;
+  overflow: hidden;
+  max-height: 320px;
 }
 .error-alert.component > main > p {
   word-break: break-all;
