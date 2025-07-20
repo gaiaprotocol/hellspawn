@@ -4,7 +4,7 @@
     "build": "webpack --mode=production"
   },
   "dependencies": {
-    "@webtaku/el": "^0.0.6"
+    "@webtaku/el": "^0.0.7"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
