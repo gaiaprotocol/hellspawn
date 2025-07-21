@@ -42,7 +42,6 @@ module.exports = {
     extensions: ['.ts', '.js']
   },
   plugins: [
-    new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
     new MiniCssExtractPlugin({ filename: '[name].css' }),
     new IgnoreEmitPlugin(['styles.js']),
   ],
